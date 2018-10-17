@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/server_ip_editText_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/connect_button_id"
+        android:layout_toLeftOf="@+id/connect_button_id" />
+
+    <Button
+        android:id="@+id/connect_button_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/client_send_button_id"
+        android:layout_alignLeft="@+id/client_send_button_id"
+        android:layout_alignBottom="@+id/server_ip_editText_id"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:text="Connect" />
+
+    <EditText
+        android:id="@+id/client_message_editText_id"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@+id/client_send_button_id"
+        android:layout_toLeftOf="@+id/client_send_button_id"
+        android:hint="enter text to sent" />
+
+    <Button
+        android:id="@+id/client_send_button_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:text=">"
+        android:textSize="30dp" />
+
+    <TextView
+        android:id="@+id/client_chat_history_text_id"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:layout_above="@+id/client_send_button_id"
+        android:layout_below="@+id/server_ip_editText_id"
+        android:layout_centerHorizontal="true"
+        android:text="" />
+</RelativeLayout>
