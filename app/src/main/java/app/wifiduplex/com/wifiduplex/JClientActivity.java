@@ -6,15 +6,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import app.wifiduplex.com.serialcommunicator.SocketCommunicator;
 import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageReceivedCallbacks;
 import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageSentCallbacks;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import static app.wifiduplex.com.wifiduplex.JServerActivity.PORT_NUMBER;
@@ -27,6 +26,8 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
     private static final String TAG = JClientActivity.class.getSimpleName();
 
     private EditText ipAddressEditText, sendMessageEditText;
+    private RadioGroup radioGroup;
+    private RadioButton radioButton;
     private Button connectButton, sendMessageButton;
     private TextView chatHistory;
 
@@ -56,6 +57,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
         connectButton = findViewById(R.id.connect_button_id);
         sendMessageButton = findViewById(R.id.client_send_button_id);
         chatHistory = findViewById(R.id.client_chat_history_text_id);
+        radioGroup = findViewById(R.id.radioGroupId);
 
         connectButton.setOnClickListener(this);
         sendMessageButton.setOnClickListener(this);
@@ -80,8 +82,12 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
             case R.id.client_send_button_id:
                 /*Thread sendMessageThread = new Thread(new SendMessageThread());
                 sendMessageThread.start();*/
-                socketCommunicator.sendMessageToServer(ipAddressEditText.getText().toString(), PORT_NUMBER, sendMessageEditText.getText().toString().trim(), this);
+                int chosenButton = radioGroup.getCheckedRadioButtonId();
+                radioButton = findViewById(chosenButton);
+                int port = Integer.parseInt(radioButton.getText().toString());
+                socketCommunicator.sendMessageToServer(ipAddressEditText.getText().toString(), port, sendMessageEditText.getText().toString().trim(), this);
                 Log.e(TAG, "Sending message to server");
+                sendMessageEditText.setText("");
                 break;
         }
     }

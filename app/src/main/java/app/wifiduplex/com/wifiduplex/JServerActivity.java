@@ -38,6 +38,7 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
     private BufferedReader bufferedReader;
 
     private boolean chatEnded = false;
+    private int[] ports;
 
     private Thread serverThread;
 
@@ -53,13 +54,15 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
             public void onClick(View view) {
                 Thread serverThread = new Thread(new SendMessage());
                 serverThread.start();
+                messageEditText.setText("");
                 Log.e(TAG, "Sending message to client...");
             }
         });*/
 
         //serverThread = new Thread(new MessagesListener());
         SocketCommunicator socketCommunicator = new SocketCommunicator();
-        socketCommunicator.listenToClient(PORT_NUMBER, this, this);
+        ports = new int[]{9998, 9999};
+        socketCommunicator.listenToClient(ports, this, this);
         resetStatus();
 
     }
@@ -67,8 +70,8 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
     private void resetStatus() {
 
         WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        status.setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()) + ":" + PORT_NUMBER);
-
+        status.setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
+        status.append("\nPorts: " + ports[0] + " & " + ports[1]);
         //serverThread.start();
     }
 

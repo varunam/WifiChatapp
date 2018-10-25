@@ -19,8 +19,10 @@ public class SocketCommunicator {
         new Thread(new ClientReceiver(serverIpAddress, port, clientMessageReceivedCallbacks)).start();
     }
 
-    public void listenToClient(int listeningPort, ServerMessageReceivedCallbacks serverMessageReceivedCallbacks, ClientConnectedCallbacks clientConnectedCallbacks){
-        new Thread(new ServerReceiver(listeningPort, serverMessageReceivedCallbacks, clientConnectedCallbacks)).start();
+    public void listenToClient(int[] listeningPort, ServerMessageReceivedCallbacks serverMessageReceivedCallbacks, ClientConnectedCallbacks clientConnectedCallbacks) {
+        for (int i = 0; i < listeningPort.length; i++) {
+            new Thread(new ServerReceiver(listeningPort[i], serverMessageReceivedCallbacks, clientConnectedCallbacks)).start();
+        }
     }
 
 }

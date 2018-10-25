@@ -11,8 +11,13 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
         android:layout_toStartOf="@+id/connect_button_id"
-        android:layout_toLeftOf="@+id/connect_button_id" />
+        android:layout_toLeftOf="@+id/connect_button_id"
+        android:gravity="center"
+        android:hint="IP Address" />
 
     <Button
         android:id="@+id/connect_button_id"
@@ -23,7 +28,32 @@
         android:layout_alignBottom="@+id/server_ip_editText_id"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:text="Connect" />
+        android:text="Connect"
+        android:visibility="gone" />
+
+    <RadioGroup
+        android:id="@+id/radioGroupId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/server_ip_editText_id"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/port_9999_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="9999" />
+
+        <RadioButton
+            android:id="@+id/port_9998_id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:text="9998" />
+
+    </RadioGroup>
 
     <EditText
         android:id="@+id/client_message_editText_id"
@@ -32,27 +62,29 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:layout_marginLeft="20dp"
         android:layout_toStartOf="@+id/client_send_button_id"
         android:layout_toLeftOf="@+id/client_send_button_id"
-        android:hint="enter text to sent" />
+        android:gravity="center"
+        android:hint="Type your message" />
 
     <Button
         android:id="@+id/client_send_button_id"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:text=">"
-        android:textSize="30dp" />
+        android:layout_marginRight="10dp"
+        android:text="SEND" />
 
     <TextView
         android:id="@+id/client_chat_history_text_id"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="bottom"
         android:layout_above="@+id/client_send_button_id"
         android:layout_below="@+id/server_ip_editText_id"
         android:layout_centerHorizontal="true"
+        android:gravity="bottom"
         android:text="" />
 </RelativeLayout>
