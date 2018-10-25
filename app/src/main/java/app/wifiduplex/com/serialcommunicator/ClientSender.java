@@ -5,6 +5,7 @@ import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageSentCallbac
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,10 +39,11 @@ public class ClientSender extends Thread {
 
     public void sendMessage(String message) {
         try {
+            String newMessage = message + " - Sent: " + new Date();
             socket = new Socket(serverIpAddress, port);
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
             printWriter = new PrintWriter(outputStreamWriter);
-            printWriter.println(message);
+            printWriter.println(newMessage);
             outputStreamWriter.flush();
             if (clientMessageSentCallbacks != null)
                 clientMessageSentCallbacks.clientMessageSentSuccessful(message);

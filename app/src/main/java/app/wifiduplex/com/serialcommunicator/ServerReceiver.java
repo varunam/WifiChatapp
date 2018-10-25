@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +76,7 @@ public class ServerReceiver extends Thread {
                     String message = receiveMessage(socket);
                     if (message == null)
                         return;
+                    message = message + "\n Received: " + new Date() + "\n";
                     Log.log(Level.INFO, "Received message from ServerSocket: " + message);
                     serverMessageReceivedCallbacks.onMessageReceivedByServer(message);
                 }
