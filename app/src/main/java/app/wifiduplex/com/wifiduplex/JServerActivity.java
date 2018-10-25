@@ -5,16 +5,16 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.text.format.Formatter;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import app.wifiduplex.com.serialcommunicator.SocketCommunicator;
+import app.wifiduplex.com.serialcommunicator.interfaces.ClientConnectedCallbacks;
+import app.wifiduplex.com.serialcommunicator.interfaces.ServerMessageReceivedCallbacks;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
@@ -23,7 +23,7 @@ import java.net.Socket;
 /**
  * Created by varun.am on 17/10/18
  */
-public class JServerActivity extends AppCompatActivity {
+public class JServerActivity extends AppCompatActivity implements ServerMessageReceivedCallbacks, ClientConnectedCallbacks {
 
     private static final String TAG = JServerActivity.class.getSimpleName();
     public static final int PORT_NUMBER = 9999;
@@ -39,6 +39,8 @@ public class JServerActivity extends AppCompatActivity {
 
     private boolean chatEnded = false;
 
+    private Thread serverThread;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,21 +48,28 @@ public class JServerActivity extends AppCompatActivity {
 
         initViews();
 
-        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
-        status.setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()));
-
-        sendMessageButton.setOnClickListener(new View.OnClickListener() {
+        /*sendMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Thread serverThread = new Thread(new SendMessage());
                 serverThread.start();
                 Log.e(TAG, "Sending message to client...");
             }
-        });
+        });*/
 
-        Thread serverThread = new Thread(new MessagesListener());
-        serverThread.start();
+        //serverThread = new Thread(new MessagesListener());
+        SocketCommunicator socketCommunicator = new SocketCommunicator();
+        socketCommunicator.listenToClient(PORT_NUMBER, this, this);
+        resetStatus();
 
+    }
+
+    private void resetStatus() {
+
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        status.setText(Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress()) + ":" + PORT_NUMBER);
+
+        //serverThread.start();
     }
 
     private void initViews() {
@@ -70,29 +79,37 @@ public class JServerActivity extends AppCompatActivity {
         status = findViewById(R.id.status_text_id);
     }
 
-    public void sendMessage(String message) {
-        try {
-            outputStreamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
-            printWriter = new PrintWriter(outputStreamWriter);
-            printWriter.println(message);
-            outputStreamWriter.flush();
-            System.out.println("Sent data to server: " + message);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void onMessageReceivedByServer(final String messageReceived) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chatHistory.append("Client: " + messageReceived + "\n");
+            }
+        });
     }
 
-    private String receiveMessage() {
-        try {
-            bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            return bufferedReader.readLine();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+    @Override
+    public void onClientConnected(String clientIpAddress, int clientPort) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                status.setText("Connected");
+            }
+        });
     }
 
-    public class SendMessage extends Thread {
+    @Override
+    public void onClientConnectionFailure() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                status.setText("Connection Failure");
+            }
+        });
+    }
+
+/*    public class SendMessage extends Thread {
 
         @Override
         public void run() {
@@ -124,6 +141,7 @@ public class JServerActivity extends AppCompatActivity {
         @Override
         public void run() {
             try {
+                Log.e(TAG, "Waiting for client...");
                 clientSocket = serverSocket.accept();
                 Log.e(TAG, "Client connected with ip: " + clientSocket.getInetAddress() + " at port: " + clientSocket.getPort());
                 runOnUiThread(new Runnable() {
@@ -135,9 +153,16 @@ public class JServerActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "Couldn't accept socket connection");
             }
+
             while (!chatEnded) {
                 try {
+                    Log.e(TAG,"Waiting for message...");
                     final String message = receiveMessage();
+                    Log.e(TAG,"Received message: " + message);
+                    if (clientSocket!=null && clientSocket.isConnected()) {
+                        clientSocket.close();
+                        chatEnded = true;
+                    }
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -149,12 +174,43 @@ public class JServerActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
+
+            Log.e(TAG, "MessageListener stopped");
+            chatEnded = false;
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    resetStatus();
+                }
+            });
         }
     }
 
+     public void sendMessage(String message) {
+        try {
+            outputStreamWriter = new OutputStreamWriter(clientSocket.getOutputStream());
+            printWriter = new PrintWriter(outputStreamWriter);
+            printWriter.println(message);
+            outputStreamWriter.flush();
+            System.out.println("Sent data to server: " + message);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String receiveMessage() {
+        try {
+            bufferedReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            return bufferedReader.readLine();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }*/
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         status.setText("Socket Closed");
         try {
             chatEnded = true;

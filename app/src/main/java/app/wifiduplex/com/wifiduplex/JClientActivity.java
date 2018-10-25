@@ -9,6 +9,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+import app.wifiduplex.com.serialcommunicator.SocketCommunicator;
+import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageReceivedCallbacks;
+import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageSentCallbacks;
 
 import java.io.*;
 import java.net.Socket;
@@ -18,7 +22,7 @@ import static app.wifiduplex.com.wifiduplex.JServerActivity.PORT_NUMBER;
 /**
  * Created by varun.am on 17/10/18
  */
-public class JClientActivity extends AppCompatActivity implements View.OnClickListener {
+public class JClientActivity extends AppCompatActivity implements View.OnClickListener, ClientMessageReceivedCallbacks, ClientMessageSentCallbacks {
 
     private static final String TAG = JClientActivity.class.getSimpleName();
 
@@ -32,6 +36,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
     private OutputStreamWriter outputStreamWriter;
     private PrintWriter printWriter;
     private BufferedReader bufferedReader;
+    private SocketCommunicator socketCommunicator;
 
     private boolean chatEnded = false;
 
@@ -41,6 +46,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.activity_client);
 
         initViews();
+        socketCommunicator = new SocketCommunicator();
 
     }
 
@@ -66,19 +72,56 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
                     serverIpAddress = ipAddress;
                     Log.e(TAG, "Server Ip Address stored: " + ipAddress);
 
-                    Thread clientThread = new Thread(new ClientThread());
-                    clientThread.start();
+                    /*Thread clientThread = new Thread(new ClientThread());
+                    clientThread.start();*/
+                    socketCommunicator.listenToServer(serverIpAddress, PORT_NUMBER, this);
                 }
                 break;
             case R.id.client_send_button_id:
-                Thread sendMessageThread = new Thread(new SendMessageThread());
-                sendMessageThread.start();
+                /*Thread sendMessageThread = new Thread(new SendMessageThread());
+                sendMessageThread.start();*/
+                socketCommunicator.sendMessageToServer(ipAddressEditText.getText().toString(), PORT_NUMBER, sendMessageEditText.getText().toString().trim(), this);
                 Log.e(TAG, "Sending message to server");
                 break;
         }
     }
 
-    public class ClientThread extends Thread {
+    @Override
+    public void onMessageReceivedByClient(final String messageReceived) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chatHistory.append("Server: " + messageReceived + "\n");
+            }
+        });
+    }
+
+    @Override
+    public void onMessageReceiveFailure() {
+
+    }
+
+    @Override
+    public void clientMessageSentSuccessful(final String messageSent) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                chatHistory.append("Client: " + messageSent + "\n");
+            }
+        });
+    }
+
+    @Override
+    public void clientMessageSendFailure() {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "Message sent failure", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /*public class ClientThread extends Thread {
 
         @Override
         public void run() {
@@ -144,7 +187,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 
     @Override
     protected void onDestroy() {
