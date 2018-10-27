@@ -95,7 +95,7 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
     }
 
     @Override
-    public void onClientConnected(Socket clientSocket) {
+    public void onClientConnected(Socket clientSocket, int serverPortOccupied) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

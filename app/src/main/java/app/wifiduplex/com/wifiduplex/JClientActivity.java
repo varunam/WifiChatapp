@@ -10,12 +10,13 @@ import android.widget.*;
 import com.lib.serialcommunicator.SocketCommunicator;
 import com.lib.serialcommunicator.interfaces.ClientMessageReceivedCallbacks;
 import com.lib.serialcommunicator.interfaces.ClientMessageSentCallbacks;
+import com.lib.serialcommunicator.interfaces.ServerConnectedCallbacks;
 import com.lib.serialcommunicator.interfaces.SocketsClosedCallbacks;
 
 /**
  * Created by varun.am on 17/10/18
  */
-public class JClientActivity extends AppCompatActivity implements View.OnClickListener, ClientMessageReceivedCallbacks, ClientMessageSentCallbacks, SocketsClosedCallbacks {
+public class JClientActivity extends AppCompatActivity implements View.OnClickListener, ClientMessageReceivedCallbacks, ClientMessageSentCallbacks, SocketsClosedCallbacks, ServerConnectedCallbacks {
 
     private static final String TAG = JClientActivity.class.getSimpleName();
 
@@ -61,7 +62,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
                 if (!TextUtils.isEmpty(ipAddress)) {
                     serverIpAddress = ipAddress;
                     Log.e(TAG, "Server Ip Address stored: " + ipAddress);
-                    socketCommunicator.listenToServer(serverIpAddress, 9997, this);
+                    socketCommunicator.listenToServer(serverIpAddress, 9997, this, this);
                 }
                 break;
             case R.id.client_send_button_id:
@@ -126,6 +127,26 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
             @Override
             public void run() {
                 chatHistory.append("Couldn't close socket");
+            }
+        });
+    }
+
+    @Override
+    public void connectionToServerSuccess(int connectedServerPort) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "Connection to server success", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    @Override
+    public void connectionToServerFailure(final String failureReason) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(getApplicationContext(), "Connection to server failure " + failureReason, Toast.LENGTH_LONG).show();
             }
         });
     }

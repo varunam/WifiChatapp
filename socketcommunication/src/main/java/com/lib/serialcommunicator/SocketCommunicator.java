@@ -30,18 +30,18 @@ public class SocketCommunicator {
      *
      */
     public void sendMessageToClient(Socket clientSocket, String message, ServerMessageSentCallbacks serverMessageSentCallbacks) {
-        Log.log(Level.INFO, "\" Request received: Send message to client: " + clientSocket.getInetAddress() + " at port: " + clientSocket.getPort());
+        Log.log(Level.INFO, "Request received: Send message to client: " + clientSocket.getInetAddress() + " at port: " + clientSocket.getPort());
         new Thread(new ServerSender(clientSocket, message, serverMessageSentCallbacks)).start();
     }
 
-    public void listenToServer(String serverIpAddress, int port, ClientMessageReceivedCallbacks clientMessageReceivedCallbacks) {
-        Log.log(Level.INFO, "\" Request received: Listen to server: " + serverIpAddress + " at port: " + port);
-        new Thread(new ClientReceiver(serverIpAddress, port, clientMessageReceivedCallbacks)).start();
+    public void listenToServer(String serverIpAddress, int port, ClientMessageReceivedCallbacks clientMessageReceivedCallbacks, ServerConnectedCallbacks serverConnectedCallbacks) {
+        Log.log(Level.INFO, "Request received: Listen to server: " + serverIpAddress + " at port: " + port);
+        new Thread(new ClientReceiver(serverIpAddress, port, clientMessageReceivedCallbacks, serverConnectedCallbacks)).start();
     }
 
     public void listenToClient(int[] listeningPort, ServerSocketCreationCallbacks serverSocketCreationCallbacks, ServerMessageReceivedCallbacks serverMessageReceivedCallbacks, ClientConnectedCallbacks clientConnectedCallbacks) {
         for (int i = 0; i < listeningPort.length; i++) {
-            Log.log(Level.INFO, "\" Request received: Listen to clients at " + listeningPort[i]);
+            Log.log(Level.INFO, "Request received: Listen to clients at " + listeningPort[i]);
             new Thread(new ServerReceiver(listeningPort[i], serverSocketCreationCallbacks, serverMessageReceivedCallbacks, clientConnectedCallbacks)).start();
         }
     }

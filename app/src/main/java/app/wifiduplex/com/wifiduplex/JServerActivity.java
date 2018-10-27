@@ -80,7 +80,7 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
     }
 
     @Override
-    public void onClientConnected(final Socket clientSocket) {
+    public void onClientConnected(final Socket clientSocket, int serverPortOccupied) {
         this.clientSocket = clientSocket;
     }
 
@@ -144,7 +144,7 @@ public class JServerActivity extends AppCompatActivity implements ServerMessageR
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(getApplicationContext(),"Couldn't send message " + failureReason, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Couldn't send message " + failureReason, Toast.LENGTH_LONG).show();
             }
         });
     }

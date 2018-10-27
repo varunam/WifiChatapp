@@ -77,7 +77,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
 
                     /*Thread clientThread = new Thread(new ClientThread());
                     clientThread.start();*/
-                    socketCommunicator.listenToServer(serverIpAddress, PORT_NUMBER, this);
+                    socketCommunicator.listenToServer(serverIpAddress, PORT_NUMBER, this, null);
                 }
                 break;
             case R.id.client_send_button_id:

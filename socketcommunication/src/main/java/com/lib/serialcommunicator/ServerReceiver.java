@@ -53,9 +53,9 @@ public class ServerReceiver extends Thread {
                     if (serverSocket != null) {
                         Log.log(Level.INFO, "Waiting for client at " + port);
                         socket = serverSocket.accept();
-                        listenToSocket(socket);
+                        listenToSocket(socket, port);
                         if (clientConnectedCallbacks != null) {
-                            clientConnectedCallbacks.onClientConnected(socket);
+                            clientConnectedCallbacks.onClientConnected(socket, port);
                         }
                         Log.log(Level.INFO, "Client connected: " + socket.getInetAddress() + ":" + socket.getPort());
                     } else break;
@@ -80,19 +80,18 @@ public class ServerReceiver extends Thread {
         }
     }
 
-    private void listenToSocket(final Socket socket) {
+    private void listenToSocket(final Socket socket, int serverPort) {
+        Log.log(Level.INFO, "Client connected at " + serverPort + " \nListening...");
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.log(Level.INFO, "Waiting for message...");
                 while (true) {
                     String message = receiveMessage(socket);
-                    if (message == null)
-                    {
-                        Log.log(Level.INFO,"Message received is NULL. Returning...");
+                    if (message == null) {
+                        Log.log(Level.INFO, "Message received is NULL. Returning...");
                         return;
-                    }
-                    else {
+                    } else {
                         Log.log(Level.INFO, "Received message from ServerSocket: " + message);
                         serverMessageReceivedCallbacks.onMessageReceivedByServer(message);
                     }

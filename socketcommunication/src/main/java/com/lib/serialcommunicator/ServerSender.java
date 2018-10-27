@@ -40,7 +40,6 @@ public class ServerSender extends Thread {
             if (serverMessageSentCallbacks != null)
                 serverMessageSentCallbacks.serverMessageSendSuccessfull(message);
             outputStreamWriter.close();
-            clientSocket.close();
             printWriter.close();
             Log.log(Level.INFO, "Sent message to client " + message);
         } catch (Exception e) {
