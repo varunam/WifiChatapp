@@ -61,7 +61,7 @@ public class JClientActivity extends AppCompatActivity implements View.OnClickLi
                 if (!TextUtils.isEmpty(ipAddress)) {
                     serverIpAddress = ipAddress;
                     Log.e(TAG, "Server Ip Address stored: " + ipAddress);
-                    //socketCommunicator.listenToServer(serverIpAddress, PORT_NUMBER, this);
+                    socketCommunicator.listenToServer(serverIpAddress, 9997, this);
                 }
                 break;
             case R.id.client_send_button_id:

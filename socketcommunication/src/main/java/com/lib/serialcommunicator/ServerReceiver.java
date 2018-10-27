@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -56,7 +55,7 @@ public class ServerReceiver extends Thread {
                         socket = serverSocket.accept();
                         listenToSocket(socket);
                         if (clientConnectedCallbacks != null) {
-                            clientConnectedCallbacks.onClientConnected(socket.getInetAddress().toString(), socket.getPort());
+                            clientConnectedCallbacks.onClientConnected(socket);
                         }
                         Log.log(Level.INFO, "Client connected: " + socket.getInetAddress() + ":" + socket.getPort());
                     } else break;
@@ -89,10 +88,14 @@ public class ServerReceiver extends Thread {
                 while (true) {
                     String message = receiveMessage(socket);
                     if (message == null)
+                    {
+                        Log.log(Level.INFO,"Message received is NULL. Returning...");
                         return;
-                    message = message + "\n Received: " + new Date() + "\n";
-                    Log.log(Level.INFO, "Received message from ServerSocket: " + message);
-                    serverMessageReceivedCallbacks.onMessageReceivedByServer(message);
+                    }
+                    else {
+                        Log.log(Level.INFO, "Received message from ServerSocket: " + message);
+                        serverMessageReceivedCallbacks.onMessageReceivedByServer(message);
+                    }
                 }
             }
         }).start();

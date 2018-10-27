@@ -14,43 +14,40 @@
         android:layout_marginStart="20dp"
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
-        android:layout_toStartOf="@+id/connect_button_id"
-        android:layout_toLeftOf="@+id/connect_button_id"
+        android:layout_toLeftOf="@+id/radioGroupId"
         android:gravity="center"
         android:hint="IP Address" />
 
     <Button
         android:id="@+id/connect_button_id"
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_alignStart="@+id/client_send_button_id"
-        android:layout_alignLeft="@+id/client_send_button_id"
-        android:layout_alignBottom="@+id/server_ip_editText_id"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:text="Connect"
-        android:visibility="gone" />
+        android:layout_below="@id/server_ip_editText_id"
+        android:layout_centerHorizontal="true"
+        android:text="Connect" />
 
     <RadioGroup
         android:id="@+id/radioGroupId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/server_ip_editText_id"
         android:layout_centerHorizontal="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
         android:orientation="horizontal">
 
         <RadioButton
             android:id="@+id/port_9999_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:text="9999" />
 
         <RadioButton
             android:id="@+id/port_9998_id"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
+
             android:text="9998" />
 
     </RadioGroup>

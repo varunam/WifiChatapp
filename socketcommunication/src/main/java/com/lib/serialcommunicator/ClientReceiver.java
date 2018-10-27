@@ -46,8 +46,12 @@ public class ClientReceiver extends Thread {
         while (true) {
             try {
                 String message = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())).readLine();
-                clientCallbacks.onMessageReceivedByClient(message);
-                Log.log(Level.INFO, "Received message from ServerSocket: " + message);
+                if (message == null)
+                    return;
+                else {
+                    clientCallbacks.onMessageReceivedByClient(message);
+                    Log.log(Level.INFO, "Received message from ServerSocket: " + message);
+                }
             } catch (Exception e) {
                 clientCallbacks.onMessageReceiveFailure();
                 Log.log(Level.SEVERE, "Couldn't receive message");
