@@ -1,6 +1,7 @@
-package app.wifiduplex.com.serialcommunicator;
+package com.lib.serialcommunicator;
 
-import app.wifiduplex.com.serialcommunicator.interfaces.ClientMessageReceivedCallbacks;
+import com.lib.serialcommunicator.interfaces.ClientMessageReceivedCallbacks;
+import com.lib.serialcommunicator.interfaces.SocketsClosedCallbacks;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -15,10 +16,9 @@ import java.util.logging.Logger;
 public class ClientReceiver extends Thread {
 
     private static final String TAG = ClientReceiver.class.getSimpleName();
-    private Socket clientSocket;
+    private static Socket clientSocket;
     private String serverIpAddress;
     private int port;
-    private boolean endConnection = false;
     private ClientMessageReceivedCallbacks clientCallbacks;
     private Logger Log = Logger.getLogger(TAG);
 
@@ -43,7 +43,7 @@ public class ClientReceiver extends Thread {
     }
 
     private void listenToSocket(Socket clientSocket) {
-        while (!endConnection) {
+        while (true) {
             try {
                 String message = new BufferedReader(new InputStreamReader(clientSocket.getInputStream())).readLine();
                 clientCallbacks.onMessageReceivedByClient(message);
@@ -53,6 +53,26 @@ public class ClientReceiver extends Thread {
                 Log.log(Level.SEVERE, "Couldn't receive message");
                 e.printStackTrace();
             }
+        }
+    }
+
+    public static void closeSockets(SocketsClosedCallbacks socketsClosedCallbacks) {
+        //closing socket
+        Logger.getLogger(TAG).log(Level.INFO, "Closing socket");
+        try {
+            clientSocket.close();
+            if (socketsClosedCallbacks != null) {
+                Logger.getLogger(TAG).log(Level.INFO, "Closed clientSocket successfully");
+                socketsClosedCallbacks.socketCloseSuccessful();
+            }
+        } catch (IOException e) {
+            if (socketsClosedCallbacks != null) {
+                Logger.getLogger(TAG).log(Level.SEVERE, "Couldn't close clientSocket " + e);
+                socketsClosedCallbacks.socketCloseFailure();
+            }
+
+            Logger.getLogger(TAG).log(Level.SEVERE, "Couldn't close socket " + e);
+            e.printStackTrace();
         }
     }
 }

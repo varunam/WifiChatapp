@@ -1,10 +1,12 @@
-package com.lib.socketcommunication;
+package com.lib.serialcommunicator;
 
-import com.lib.socketcommunication.interfaces.ClientMessageSentCallbacks;
+
+import com.lib.serialcommunicator.interfaces.ClientMessageSentCallbacks;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,13 +40,22 @@ public class ClientSender extends Thread {
 
     public void sendMessage(String message) {
         try {
+            String newMessage = message + " - Sent: " + new Date();
             socket = new Socket(serverIpAddress, port);
             outputStreamWriter = new OutputStreamWriter(socket.getOutputStream());
             printWriter = new PrintWriter(outputStreamWriter);
-            printWriter.println(message);
+            printWriter.println(newMessage);
             outputStreamWriter.flush();
+            if (clientMessageSentCallbacks != null)
+                clientMessageSentCallbacks.clientMessageSentSuccessful(message);
+            outputStreamWriter.close();
+            socket.close();
+            printWriter.close();
             Log.log(Level.INFO, "Sent message to server " + message);
         } catch (Exception e) {
+            if (clientMessageSentCallbacks != null)
+                clientMessageSentCallbacks.clientMessageSendFailure();
+            Log.log(Level.SEVERE, "Couldn't send message to server " + message);
             e.printStackTrace();
         }
     }

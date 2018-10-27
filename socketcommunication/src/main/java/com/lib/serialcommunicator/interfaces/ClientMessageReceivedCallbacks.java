@@ -1,4 +1,4 @@
-package com.lib.socketcommunication.interfaces;
+package com.lib.serialcommunicator.interfaces;
 
 /**
  * Created by varun.am on 24/10/18
